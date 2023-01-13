@@ -1,0 +1,28 @@
+{
+  "name": "arsene",
+  "version": "1.0.0",
+  "description": "Bandcamp downloader",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node src/main.ts",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --max-warnings=0",
+    "check-ts": "tsc --noEmit",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/irvingwash/arsene"
+  },
+  "author": "WI",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.48.1",
+    "@typescript-eslint/parser": "^5.48.1",
+    "eslint": "^8.31.0",
+    "husky": "^8.0.0"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.1"
+  }
+}
