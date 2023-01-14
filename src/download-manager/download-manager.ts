@@ -1,6 +1,6 @@
-import { AlbumDownloader } from 'src/album-downloader/album-downloader';
-import { CommonParser } from 'src/parsers/common/common-parser';
-import { parserFactory } from 'src/parsers/parser-factory';
+import { AlbumDownloader } from '../album-downloader/album-downloader';
+import { CommonParser } from '../parsers/common/common-parser';
+import { parserFactory } from '../parsers/parser-factory';
 
 export interface IDownloadManager {
 	download(): Promise<void>;

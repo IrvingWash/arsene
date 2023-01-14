@@ -45,14 +45,17 @@ export class BandcampParser extends CommonParser {
 	}
 
 	private _getAlbumArtURL(albumPageSourceCode: string): string {
-		const urlCodeStart = 'src="';
+		const urlCodeStart = 'src="https://';
 		const urlCodeEnd = 'jpg"';
 
 		const albumArtCodeChunk = albumPageSourceCode.substring(albumPageSourceCode.indexOf('<div id="tralbumArt">'));
 
-		const urlStartId = albumArtCodeChunk.indexOf(urlCodeStart);
-		const urlEndId = albumArtCodeChunk.indexOf(urlCodeEnd);
+		const urlCodeStartId = albumArtCodeChunk.indexOf(urlCodeStart) + urlCodeStart.length;
 
-		return albumArtCodeChunk.substring(urlStartId + urlCodeStart.length, urlEndId + urlCodeEnd.length + 1);
+		const urlCodeChunkStart = albumArtCodeChunk.substring(urlCodeStartId);
+
+		const urlCodeEndId = urlCodeChunkStart.indexOf(urlCodeEnd) + urlCodeEnd.length - 1;
+
+		return "http://" + urlCodeChunkStart.substring(0, urlCodeEndId);
 	}
 }

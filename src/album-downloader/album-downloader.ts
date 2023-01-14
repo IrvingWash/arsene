@@ -48,7 +48,7 @@ export class AlbumDownloader implements IMP3Downloader {
 	}
 
 	private async _downloadAlbumArt(): Promise<void> {
-		await (await axios.get(this._album.albumArtURL))
+		await (await axios.get(this._album.albumArtURL, { responseType: 'stream' }))
 			.data
 			.pipe(fs.createWriteStream(`${this._path}/cover.jpg`));
 	}
