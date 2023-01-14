@@ -4,7 +4,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "module": "commonjs",
-    "rootDir": "./src",
+    "rootDir": "./",
+		"paths": {
+			"@utils/*": ["src/utils/*"]
+		},
     "baseUrl": "./",
     "resolveJsonModule": true,
     "declaration": true,
