@@ -2,25 +2,25 @@ import axios from 'axios';
 
 import { decodeDoubleQuoteHtmlEntity } from '@utils/helpers';
 
-import { BandcampAlbumMetainfo } from 'src/bandcamp/bandcamp-objects';
+import { AlbumMetainfo } from 'src/objects';
 
-export interface IBandcampParser {
-	getBandcampAlbumMetainfo(albumURL: string): Promise<BandcampAlbumMetainfo>;
-}
+import { CommonParser } from '../common/common-parser';
+import { BandcampAlbumConverter } from './bandcamp-album-converter';
 
-export class BandcampParser implements IBandcampParser {
-	private _albumURL: string;
+export class BandcampParser extends CommonParser {
 	private _albumMetainfoDataAttributeCodeStart = 'data-tralbum="';
 	private _albumMetainfoDataAttributeCodeEnd = '}"';
 
 	public constructor(albumURL: string) {
-		this._albumURL = albumURL;
+		super(albumURL);
 	}
 
-	public async getBandcampAlbumMetainfo(): Promise<BandcampAlbumMetainfo> {
+	public async getAlbumMetainfo(): Promise<AlbumMetainfo> {
 		const albumSourceCode = await this._getAlbumPageSourceCode();
 
-		return JSON.parse(await this._getBandcampAlbumMetainfoJSON(albumSourceCode));
+		const bandcampAlbum = JSON.parse(await this._getBandcampAlbumMetainfoJSON(albumSourceCode));
+
+		return new BandcampAlbumConverter().convert(bandcampAlbum);
 	}
 
 	private async _getAlbumPageSourceCode(): Promise<string> {

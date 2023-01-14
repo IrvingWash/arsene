@@ -1,6 +1,6 @@
 import { AlbumMetainfo, TrackMetainfo } from 'src/objects';
 
-import { BandcampAlbumMetainfo } from './bandcamp-objects';
+import { BandcampAlbumMetainfo, BandcampTrackInfo } from './bandcamp-objects';
 
 export class BandcampAlbumConverter {
 	public convert(bandcampAlbum: BandcampAlbumMetainfo): AlbumMetainfo {
@@ -14,9 +14,18 @@ export class BandcampAlbumConverter {
 			trackinfo,
 		} = bandcampAlbum;
 
+		return {
+			artist,
+			title: current.title,
+			releaseYear: new Date(current.release_date).getFullYear(),
+			tracks: this._convertTracks(trackinfo),
+		};
+	}
+
+	private _convertTracks(bandcampTracks: BandcampTrackInfo[]): TrackMetainfo[] {
 		const tracks: TrackMetainfo[] = [];
 
-		for (const track of trackinfo) {
+		for (const track of bandcampTracks) {
 			const { track_num, title, file } = track;
 
 			tracks.push({
@@ -26,11 +35,6 @@ export class BandcampAlbumConverter {
 			});
 		}
 
-		return {
-			artist: artist,
-			title: current.title,
-			releaseYear: new Date(current.release_date).getFullYear(),
-			tracks,
-		};
+		return tracks;
 	}
 }
