@@ -1,4 +1,4 @@
-import { MP3Downloader } from 'src/mp3-downloader/mp3-downloader';
+import { AlbumDownloader } from 'src/album-downloader/album-downloader';
 import { CommonParser } from 'src/parsers/common/common-parser';
 import { parserFactory } from 'src/parsers/parser-factory';
 
@@ -27,6 +27,6 @@ export class DownloadManager implements IDownloadManager {
 	public async download(): Promise<void> {
 		const data = await this._parser.getAlbumMetainfo();
 
-		await new MP3Downloader(data, this._downloadDirectory).downloadAlbum();
+		await new AlbumDownloader(data, this._downloadDirectory).downloadAlbum();
 	}
 }

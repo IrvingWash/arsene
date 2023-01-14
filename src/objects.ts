@@ -3,6 +3,7 @@ export interface AlbumMetainfo {
 	artist: string;
 	releaseYear: number;
 	tracks: TrackMetainfo[];
+	albumArtURL: string;
 }
 
 export interface TrackMetainfo {

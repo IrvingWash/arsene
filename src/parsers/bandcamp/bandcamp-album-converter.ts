@@ -3,7 +3,7 @@ import { AlbumMetainfo, TrackMetainfo } from 'src/objects';
 import { BandcampAlbumMetainfo, BandcampTrackInfo } from './bandcamp-objects';
 
 export class BandcampAlbumConverter {
-	public convert(bandcampAlbum: BandcampAlbumMetainfo): AlbumMetainfo {
+	public convert(bandcampAlbum: BandcampAlbumMetainfo, albumArtURL: string): AlbumMetainfo {
 		if (!bandcampAlbum.hasAudio) {
 			throw new Error('Album does not have audio');
 		}
@@ -19,6 +19,7 @@ export class BandcampAlbumConverter {
 			title: current.title,
 			releaseYear: new Date(current.release_date).getFullYear(),
 			tracks: this._convertTracks(trackinfo),
+			albumArtURL: albumArtURL,
 		};
 	}
 

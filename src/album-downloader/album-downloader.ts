@@ -10,7 +10,7 @@ export interface IMP3Downloader {
 	downloadAlbum(downloadDirectory: string): void;
 }
 
-export class MP3Downloader implements IMP3Downloader {
+export class AlbumDownloader implements IMP3Downloader {
 	private _album: AlbumMetainfo;
 	private _downloadDirectory: string;
 	private _path: string;
@@ -23,6 +23,8 @@ export class MP3Downloader implements IMP3Downloader {
 
 	public async downloadAlbum(): Promise<void> {
 		this._createDirectory();
+
+		await this._downloadAlbumArt();
 
 		for (const track of this._album.tracks) {
 			await (await axios.get(track.url, { responseType: 'stream' }))
@@ -43,5 +45,11 @@ export class MP3Downloader implements IMP3Downloader {
 
 	private _createDirectory(): void {
 		fs.mkdirSync(this._path, { recursive: true });
+	}
+
+	private async _downloadAlbumArt(): Promise<void> {
+		await (await axios.get(this._album.albumArtURL))
+			.data
+			.pipe(fs.createWriteStream(`${this._path}/cover.jpg`));
 	}
 }
