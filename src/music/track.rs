@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct Track {
     pub title: String,
     pub track_number: u64,

@@ -1,8 +1,13 @@
-use bandcamp_downloader::cli;
+use arsene::{cli, Parser as BandcampParser};
 use clap::Parser;
 
-fn main() {
+fn main() -> Result<(), String> {
     let args = cli::Args::parse();
+    let mut downloader = BandcampParser::new(args.album_url().to_string());
 
-    println!("{:#?}", args);
+    let album = downloader.parse()?;
+
+    println!("{album:#?}");
+
+    Ok(())
 }
