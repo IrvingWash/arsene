@@ -1,4 +1,5 @@
 use std::{fs, path::PathBuf};
+use colored::Colorize;
 
 use crate::music::Album;
 
@@ -12,10 +13,11 @@ impl Downloader {
     }
 
     pub fn download(&mut self, album: Album) -> Result<(), String> {
-        println!(
+        let start_text = format!(
             "Downloading {} - {} ({})",
             album.artist, album.title, album.release_year
-        );
+        ).bold().green();
+        println!("{start_text}");
 
         self.path.push(format!(
             "{} - {} ({})",
@@ -27,11 +29,13 @@ impl Downloader {
         self.download_cover(&album)?;
         self.download_tracks(&album)?;
 
+        println!("{}", "Download finished".bold().green());
+
         Ok(())
     }
 
     fn download_cover(&self, album: &Album) -> Result<(), String> {
-        println!("Downloading album art");
+        println!("{}", "Downloading the album art".blue());
 
         let response = reqwest::blocking::get(&album.art_url);
 
@@ -43,7 +47,7 @@ impl Downloader {
 
             let _ = response.copy_to(&mut album_art_file);
         } else {
-            println!("Failed to download album art");
+            println!("{}", "Failed to download album art".yellow());
         }
 
         Ok(())
@@ -51,12 +55,13 @@ impl Downloader {
 
     fn download_tracks(&self, album: &Album) -> Result<(), String> {
         for (i, track) in album.tracks.iter().enumerate() {
-            println!(
+            let download_track_text = format!(
                 "Downloading {} [{}/{}]",
                 track.title,
                 i + 1,
                 album.tracks.len()
-            );
+            ).blue();
+            println!("{download_track_text}");
 
             let response = reqwest::blocking::get(&track.url);
 
@@ -68,7 +73,8 @@ impl Downloader {
 
                 let _ = response.copy_to(&mut track_file);
             } else {
-                println!("Failed to download {}", track.title);
+                let failed_text = format!("Failed to download {}", track.title).red();
+                println!("{failed_text}");
             }
         }
 
