@@ -33,30 +33,43 @@ impl Downloader {
     fn download_cover(&self, album: &Album) -> Result<(), String> {
         println!("Downloading album art");
 
-        let mut cover_path = self.path.clone();
-        cover_path.push("cover.jpg");
+        let response = reqwest::blocking::get(&album.art_url);
 
-        let mut album_art_file = fs::File::create(cover_path).map_err(|op| op.to_string())?;
+        if let Ok(mut response) = response {
+            let mut cover_path = self.path.clone();
+            cover_path.push("cover.jpg");
 
-        let _ = reqwest::blocking::get(&album.art_url)
-            .map_err(|op| op.to_string())?
-            .copy_to(&mut album_art_file);
+            let mut album_art_file = fs::File::create(cover_path).map_err(|op| op.to_string())?;
+
+            let _ = response.copy_to(&mut album_art_file);
+        } else {
+            println!("Failed to download album art");
+        }
 
         Ok(())
     }
 
     fn download_tracks(&self, album: &Album) -> Result<(), String> {
-        for track in &album.tracks {
-            println!("Downloading {}", track.title);
+        for (i, track) in album.tracks.iter().enumerate() {
+            println!(
+                "Downloading {} [{}/{}]",
+                track.title,
+                i + 1,
+                album.tracks.len()
+            );
 
-            let mut track_path = self.path.clone();
-            track_path.push(format!("{}. {}.mp3", track.track_number, track.title));
+            let response = reqwest::blocking::get(&track.url);
 
-            let mut track_file = fs::File::create(track_path).map_err(|op| op.to_string())?;
+            if let Ok(mut response) = response {
+                let mut track_path = self.path.clone();
+                track_path.push(format!("{}. {}.mp3", track.track_number, track.title));
 
-            let _ = reqwest::blocking::get(&track.url)
-                .map_err(|op| op.to_string())?
-                .copy_to(&mut track_file);
+                let mut track_file = fs::File::create(track_path).map_err(|op| op.to_string())?;
+
+                let _ = response.copy_to(&mut track_file);
+            } else {
+                println!("Failed to download {}", track.title);
+            }
         }
 
         Ok(())
