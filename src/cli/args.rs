@@ -6,7 +6,7 @@ use clap::Parser;
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 pub struct Args {
-    /// Album URL on BandCamp
+    /// Album URL on bandcamp
     #[arg(short, long, value_parser = cli_utils::is_bandcamp_url)]
     album_url: String,
 
