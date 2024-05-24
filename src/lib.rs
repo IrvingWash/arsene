@@ -1,3 +1,2 @@
-pub use album::Album;
-
-mod album;
+pub mod music;
+pub mod cli;
