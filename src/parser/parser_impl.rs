@@ -1,3 +1,5 @@
+use chrono::{DateTime, Datelike};
+
 use crate::{
     music::{Album, Track},
     parser::bandcamp_objects::BandcampTralbum,
@@ -22,38 +24,48 @@ impl Parser {
     pub fn parse(&mut self) -> Result<Album, String> {
         let html = self.fetch_html()?;
 
-        println!("{}", self.parse_album_art(&html));
+        let tralbum = self.parse_tralbum(&html);
 
-        let album = Album::new(self.parse_tracks(&html), self.parse_album_art(&html));
+        let album = Album::new(
+            tralbum.artist.clone(),
+            tralbum.current.title.clone(),
+            DateTime::parse_from_rfc2822(&tralbum.album_release_date)
+                .map_err(|op| op.to_string())?
+                .year() as u64,
+            self.parse_tracks(tralbum)?,
+            self.parse_album_art(&html),
+        );
 
         Ok(album)
     }
 
     fn fetch_html(&self) -> Result<String, String> {
-        let response = reqwest::blocking::get(&self.url);
-
-        match response {
-            Err(error) => Err(error.to_string()),
-            Ok(response) => match response.text() {
-                Ok(text) => Ok(text),
-                Err(error) => Err(error.to_string()),
-            },
-        }
+        reqwest::blocking::get(&self.url)
+            .map_err(|op| op.to_string())?
+            .text()
+            .map_err(|op| op.to_string())
     }
 
-    fn parse_tracks(&self, html: &str) -> Vec<Track> {
+    fn parse_tralbum(&self, html: &str) -> BandcampTralbum {
         let encoded_data = html.split(DATA_PREFIX).collect::<Vec<&str>>()[1]
             .split(DATA_POSTFIX)
             .collect::<Vec<&str>>()[0];
 
         let data = html_escape::decode_html_entities(encoded_data).to_string();
-        let tralbum: BandcampTralbum = serde_json::from_str(&data).unwrap();
 
-        tralbum
+        serde_json::from_str(&data).unwrap()
+    }
+
+    fn parse_tracks(&self, tralbum: BandcampTralbum) -> Result<Vec<Track>, String> {
+        if tralbum.current.r#type != "album" {
+            return Err(String::from("Please pass a URL to an album"));
+        }
+
+        Ok(tralbum
             .trackinfo
             .into_iter()
             .filter_map(|trackinfo| {
-                if trackinfo.is_downloadable == Some(true) {
+                if trackinfo.file.is_some() {
                     Some(Track {
                         title: trackinfo.title,
                         track_number: trackinfo.track_num,
@@ -63,7 +75,7 @@ impl Parser {
                     None
                 }
             })
-            .collect()
+            .collect())
     }
 
     fn parse_album_art(&self, html: &str) -> String {
