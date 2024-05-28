@@ -16,6 +16,10 @@ pub struct Args {
 }
 
 impl Args {
+    pub fn new() -> Args {
+        Args::parse()
+    }
+
     pub fn album_url(&self) -> &String {
         &self.album_url
     }
