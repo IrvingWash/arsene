@@ -1,5 +1,7 @@
 # arsene
 
+![Crates.io Version](https://img.shields.io/crates/v/arsene)
+
 A simple CLI tool to download albums from bandcamp. Only 128 kbps.
 
 # Contents
