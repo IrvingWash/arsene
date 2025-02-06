@@ -23,10 +23,10 @@ cargo install arsene
 2. `cargo install --path /path/to/the/repo`
 
 ## Command-line options
--a, --album-url <ALBUM_URL>  # Album URL on bandcamp
--s, --save-path <SAVE_PATH>  # The path where the downloaded files will be saved
--h, --help                   # Print help
--V, --version                # Print version
+-a, --album-url <ALBUM_URL>  # Album URL on bandcamp <br>
+-s, --save-path <SAVE_PATH>  # The path where the downloaded files will be saved <br>
+-h, --help                   # Print help <br>
+-V, --version                # Print version <br>
 
 ## Usage
 ```bash
